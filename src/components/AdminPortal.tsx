@@ -3932,18 +3932,18 @@ export const AdminPortal: React.FC = () => {
             {/* Products Table */}
             <div className="bg-white rounded-2xl border-2 border-slate-300 shadow-md overflow-hidden ring-1 ring-slate-900/5">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-slate-700 font-sans border-collapse">
+                <table className="w-full min-w-[1100px] text-left text-xs text-slate-700 font-sans border-collapse">
                   <thead className="bg-slate-100 text-slate-800 font-extrabold border-b-2 border-slate-300">
                     <tr>
-                      <th className="py-3.5 px-4 font-extrabold border-r border-slate-200">ছবি</th>
-                      <th className="py-3.5 px-4 font-extrabold border-r border-slate-200">কোড</th>
-                      <th className="py-3.5 px-4 font-extrabold border-r border-slate-200">নাম</th>
-                      <th className="py-3.5 px-4 font-extrabold border-r border-slate-200">ক্যাটাগরি</th>
-                      <th className="py-3.5 px-4 font-extrabold border-r border-slate-200">আসল মূল্য (Cost)</th>
-                      <th className="py-3.5 px-4 font-extrabold border-r border-slate-200">বিক্রয় মূল্য</th>
-                      <th className="py-3.5 px-4 font-extrabold border-r border-slate-200">কমিশন</th>
-                      <th className="py-3.5 px-4 font-extrabold border-r border-slate-200">স্ট্যাটাস</th>
-                      <th className="py-3.5 px-4 font-extrabold text-right">অ্যাকশন</th>
+                      <th className="py-3 px-3 font-extrabold border-r border-slate-200">ছবি</th>
+                      <th className="py-3 px-3 font-extrabold border-r border-slate-200">কোড</th>
+                      <th className="py-3 px-3 font-extrabold border-r border-slate-200">নাম</th>
+                      <th className="py-3 px-3 font-extrabold border-r border-slate-200">ক্যাটাগরি</th>
+                      <th className="py-3 px-3 font-extrabold border-r border-slate-200">আসল মূল্য (Cost)</th>
+                      <th className="py-3 px-3 font-extrabold border-r border-slate-200">বিক্রয় মূল্য</th>
+                      <th className="py-3 px-3 font-extrabold border-r border-slate-200">কমিশন</th>
+                      <th className="py-3 px-3 font-extrabold border-r border-slate-200">স্ট্যাটাস</th>
+                      <th className="py-3 px-3 font-extrabold text-right">অ্যাকশন</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y-2 divide-slate-200 font-medium">
@@ -3972,8 +3972,8 @@ export const AdminPortal: React.FC = () => {
                         const edit = getRowEdit(prod);
                         return (
                           <tr key={prod.id} className="hover:bg-slate-50/80 transition-colors">
-                            <td className="py-3 px-4 border-r border-slate-200">
-                              <div className="w-11 h-11 rounded-lg overflow-hidden bg-slate-100 border-2 border-slate-300 shadow-2xs shrink-0">
+                            <td className="py-2.5 px-3 border-r border-slate-200">
+                              <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-100 border-2 border-slate-300 shadow-2xs shrink-0">
                                 <img
                                   src={prod.images[0]?.url || '/images/product_shop_dress_1790244714775.jpg'}
                                   alt=""
@@ -3981,41 +3981,41 @@ export const AdminPortal: React.FC = () => {
                                 />
                               </div>
                             </td>
-                            <td className="py-3 px-4 font-mono font-black text-slate-900 border-r border-slate-200 whitespace-nowrap">{prod.productCode}</td>
-                            <td className="py-3 px-4 border-r border-slate-200 min-w-[180px]">
+                            <td className="py-2.5 px-3 font-mono font-black text-slate-900 border-r border-slate-200 whitespace-nowrap">{prod.productCode}</td>
+                            <td className="py-2.5 px-3 border-r border-slate-200 min-w-[170px]">
                               <span className="font-extrabold text-slate-900 block truncate">{prod.nameBn}</span>
                               <span className="text-slate-500 text-[11px] block truncate">{prod.nameEn}</span>
                             </td>
-                            <td className="py-3 px-4 uppercase text-[11px] font-bold text-slate-600 border-r border-slate-200 whitespace-nowrap">{prod.categorySlug}</td>
+                            <td className="py-2.5 px-3 uppercase text-[11px] font-bold text-slate-600 border-r border-slate-200 whitespace-nowrap">{prod.categorySlug}</td>
 
                             {/* Original Price (Cost) Text Input */}
-                            <td className="py-3 px-4 border-r border-slate-200 whitespace-nowrap">
-                              <div className="inline-flex items-center gap-1 bg-white border-2 border-slate-300 focus-within:border-[#009245] rounded-xl px-2.5 py-1.5 transition-all shadow-2xs">
+                            <td className="py-2.5 px-3 border-r border-slate-200 whitespace-nowrap">
+                              <div className="inline-flex items-center gap-1 bg-white border-2 border-slate-300 focus-within:border-[#009245] rounded-xl px-2 py-1 transition-all shadow-2xs">
                                 <span className="text-slate-400 font-black text-xs">৳</span>
                                 <input
                                   type="number"
                                   value={edit.originalPrice}
                                   onChange={(e) => updateRowEdit(prod.id, 'originalPrice', e.target.value)}
-                                  className="w-20 bg-transparent font-mono font-black text-slate-900 outline-none text-left [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-xs"
+                                  className="w-18 bg-transparent font-mono font-black text-slate-900 outline-none text-left [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-xs"
                                 />
                               </div>
                             </td>
 
                             {/* Selling Price Text Input */}
-                            <td className="py-3 px-4 border-r border-slate-200 whitespace-nowrap">
-                              <div className="inline-flex items-center gap-1 bg-white border-2 border-slate-300 focus-within:border-[#009245] rounded-xl px-2.5 py-1.5 transition-all shadow-2xs">
+                            <td className="py-2.5 px-3 border-r border-slate-200 whitespace-nowrap">
+                              <div className="inline-flex items-center gap-1 bg-white border-2 border-slate-300 focus-within:border-[#009245] rounded-xl px-2 py-1 transition-all shadow-2xs">
                                 <span className="text-slate-400 font-black text-xs">৳</span>
                                 <input
                                   type="number"
                                   value={edit.sellingPrice}
                                   onChange={(e) => updateRowEdit(prod.id, 'sellingPrice', e.target.value)}
-                                  className="w-20 bg-transparent font-mono font-black text-slate-900 outline-none text-left [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-xs"
+                                  className="w-18 bg-transparent font-mono font-black text-slate-900 outline-none text-left [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-xs"
                                 />
                               </div>
                             </td>
 
                             {/* Commission Dropdown Selection */}
-                            <td className="py-3 px-4 border-r border-slate-200 whitespace-nowrap">
+                            <td className="py-2.5 px-3 border-r border-slate-200 whitespace-nowrap">
                               <select
                                 value={
                                   edit.starRating
@@ -4044,13 +4044,13 @@ export const AdminPortal: React.FC = () => {
                                     updateRowEdit(prod.id, 'commissionType', 'fixed');
                                   }
                                 }}
-                                className="px-2.5 py-1.5 bg-emerald-50 text-emerald-800 font-black border-2 border-emerald-300 rounded-xl text-xs outline-none cursor-pointer hover:bg-emerald-100 transition-all shadow-2xs"
+                                className="px-2 py-1 bg-emerald-50 text-emerald-800 font-black border-2 border-emerald-300 rounded-xl text-xs outline-none cursor-pointer hover:bg-emerald-100 transition-all shadow-2xs"
                               >
-                                <option value="star-5">10% (5 Star)</option>
-                                <option value="star-4">15% (4 Star)</option>
-                                <option value="star-3">20% (3 Star)</option>
-                                <option value="star-2">25% (2 Star)</option>
-                                <option value="star-1">30% (1 Star)</option>
+                                <option value="star-5">10% (5★)</option>
+                                <option value="star-4">15% (4★)</option>
+                                <option value="star-3">20% (3★)</option>
+                                <option value="star-2">25% (2★)</option>
+                                <option value="star-1">30% (1★)</option>
                                 <option value="perc-8">8%</option>
                                 <option value="perc-5">5%</option>
                                 <option value="perc-0">0%</option>
@@ -4058,17 +4058,17 @@ export const AdminPortal: React.FC = () => {
                             </td>
 
                             {/* Status: Online vs Offline */}
-                            <td className="py-3 px-4 border-r border-slate-200 whitespace-nowrap">
+                            <td className="py-2.5 px-3 border-r border-slate-200 whitespace-nowrap">
                               <select
                                 value={edit.isActive ? 'online' : 'offline'}
                                 onChange={(e) => updateRowEdit(prod.id, 'isActive', e.target.value === 'online')}
-                                className={`px-2.5 py-1.5 rounded-xl text-xs font-black border-2 cursor-pointer outline-none transition-all shadow-2xs ${
+                                className={`px-2 py-1 rounded-xl text-xs font-black border-2 cursor-pointer outline-none transition-all shadow-2xs ${
                                   edit.isActive
                                     ? 'bg-emerald-50 text-emerald-800 border-emerald-400 hover:bg-emerald-100'
                                     : 'bg-amber-50 text-amber-800 border-amber-400 hover:bg-amber-100'
                                 }`}
                               >
-                                <option value="online">সক্রিয় (অনলাইন)</option>
+                                <option value="online">অনলাইন</option>
                                 <option value="offline">অফলাইন</option>
                               </select>
                             </td>
