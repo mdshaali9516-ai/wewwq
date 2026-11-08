@@ -3427,7 +3427,22 @@ export const AdminPortal: React.FC = () => {
           }`}>
             <div className="flex items-center gap-2 min-w-0">
               <button
-                onClick={() => setActiveTab('dashboard')}
+                onClick={() => {
+                  if (activeTab === 'categories') {
+                    if (adminCategoryPath.subSubcategory) {
+                      setAdminCategoryPath({ categorySlug: adminCategoryPath.categorySlug, subcategory: adminCategoryPath.subcategory });
+                    } else if (adminCategoryPath.subcategory) {
+                      setAdminCategoryPath({ categorySlug: adminCategoryPath.categorySlug });
+                    } else if (adminCategoryPath.categorySlug) {
+                      setAdminCategoryPath({});
+                      setAdminSelectedCategory(null);
+                    } else {
+                      setActiveTab('dashboard');
+                    }
+                  } else {
+                    setActiveTab('dashboard');
+                  }
+                }}
                 className="px-2.5 py-1.5 text-[10px] sm:text-xs font-bold text-slate-800 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg sm:rounded-xl inline-flex items-center gap-1.5 transition-all cursor-pointer shadow-3xs active:scale-95 whitespace-nowrap shrink-0"
               >
                 <ArrowLeft className="w-3.5 h-3.5 text-[#009245]" />
@@ -4298,32 +4313,73 @@ export const AdminPortal: React.FC = () => {
         {/* TAB 3: PURE CATEGORY & SECTION MANAGEMENT */}
         {activeTab === 'categories' && (
           <div className="space-y-6">
-            {/* Header & Breadcrumb Bar */}
-            <div className="flex items-center justify-between gap-2 pb-3 border-b border-slate-200">
-              <div className="flex items-center gap-2 min-w-0 flex-1">
-                {(adminCategoryPath.categorySlug || adminCategoryPath.subcategory || adminCategoryPath.subSubcategory) && (
+            {/* Header & Interactive Breadcrumb Bar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border-2 border-slate-300 shadow-md">
+              <div className="space-y-1 min-w-0">
+                {/* Professional Interactive Breadcrumb Trail */}
+                <div className="flex items-center gap-1.5 text-xs font-bold flex-wrap">
                   <button
+                    type="button"
                     onClick={() => {
-                      if (adminCategoryPath.subSubcategory) {
-                        setAdminCategoryPath({ categorySlug: adminCategoryPath.categorySlug, subcategory: adminCategoryPath.subcategory });
-                      } else if (adminCategoryPath.subcategory) {
-                        setAdminCategoryPath({ categorySlug: adminCategoryPath.categorySlug });
-                      } else {
-                        setAdminCategoryPath({});
-                        setAdminSelectedCategory(null);
-                      }
+                      setAdminCategoryPath({});
+                      setAdminSelectedCategory(null);
                     }}
-                    className="px-2.5 py-1.5 text-[10px] sm:text-xs font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-lg inline-flex items-center gap-1 transition-colors shadow-2xs whitespace-nowrap shrink-0"
+                    className={`px-2.5 py-1 rounded-xl transition-colors cursor-pointer ${
+                      !adminCategoryPath.categorySlug
+                        ? 'bg-[#009245] text-white font-extrabold shadow-2xs'
+                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
+                    }`}
                   >
-                    <ChevronLeft className="w-3.5 h-3.5" />
-                    <span>{lang === 'bn' ? 'ফিরে যান' : 'Back'}</span>
+                    {lang === 'bn' ? 'ক্যাটাগরি কন্ট্রোল' : 'Category Control'}
                   </button>
-                )}
-                <div className="min-w-0 flex-1">
-                  <h3 className="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-800 truncate">
-                    {adminCategoryPath.subSubcategory || adminCategoryPath.subcategory || adminCategoryPath.categorySlug || (lang === 'bn' ? 'ক্যাটাগরি কন্ট্রোল' : 'Categories')}
-                  </h3>
+
+                  {adminCategoryPath.categorySlug && (
+                    <>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <button
+                        type="button"
+                        onClick={() => setAdminCategoryPath({ categorySlug: adminCategoryPath.categorySlug })}
+                        className={`px-2.5 py-1 rounded-xl transition-colors cursor-pointer uppercase ${
+                          !adminCategoryPath.subcategory
+                            ? 'bg-[#009245] text-white font-extrabold shadow-2xs'
+                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
+                        }`}
+                      >
+                        {adminCategoryPath.categorySlug}
+                      </button>
+                    </>
+                  )}
+
+                  {adminCategoryPath.subcategory && (
+                    <>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <button
+                        type="button"
+                        onClick={() => setAdminCategoryPath({ categorySlug: adminCategoryPath.categorySlug, subcategory: adminCategoryPath.subcategory })}
+                        className={`px-2.5 py-1 rounded-xl transition-colors cursor-pointer ${
+                          !adminCategoryPath.subSubcategory
+                            ? 'bg-[#009245] text-white font-extrabold shadow-2xs'
+                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
+                        }`}
+                      >
+                        {adminCategoryPath.subcategory}
+                      </button>
+                    </>
+                  )}
+
+                  {adminCategoryPath.subSubcategory && (
+                    <>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span className="px-2.5 py-1 bg-[#009245] text-white font-extrabold rounded-xl shadow-2xs">
+                        {adminCategoryPath.subSubcategory}
+                      </span>
+                    </>
+                  )}
                 </div>
+
+                <p className="text-[11px] text-slate-500 font-medium pt-0.5">
+                  {lang === 'bn' ? 'ক্যাটাগরি সেকশন, সাব-ক্যাটাগরি এবং গ্রুপ কন্ট্রোল' : 'Manage categories, sub-sections, and child items'}
+                </p>
               </div>
 
               {/* Add New Category / Section Button */}
@@ -4342,9 +4398,9 @@ export const AdminPortal: React.FC = () => {
                       });
                       setIsCatModalOpen(true);
                     }}
-                    className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 text-[10px] sm:text-xs font-bold text-white bg-[#009245] hover:bg-[#007a38] rounded-lg sm:rounded-xl shadow-3xs inline-flex items-center gap-1 transition-all cursor-pointer whitespace-nowrap shrink-0"
+                    className="px-4 py-2 text-xs font-black text-white bg-[#009245] hover:bg-[#007a38] rounded-xl shadow-xs inline-flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 whitespace-nowrap shrink-0"
                   >
-                    <Plus className="w-3.5 h-3.5" />
+                    <Plus className="w-4 h-4" />
                     <span>{lang === 'bn' ? 'নতুন সেকশন' : 'Add Section'}</span>
                   </button>
                 ) : (
@@ -4368,9 +4424,9 @@ export const AdminPortal: React.FC = () => {
                       });
                       setIsSubModalOpen(true);
                     }}
-                    className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 text-[10px] sm:text-xs font-bold text-white bg-[#009245] hover:bg-[#007a38] rounded-lg sm:rounded-xl shadow-3xs inline-flex items-center gap-1 transition-all cursor-pointer whitespace-nowrap shrink-0"
+                    className="px-4 py-2 text-xs font-black text-white bg-[#009245] hover:bg-[#007a38] rounded-xl shadow-xs inline-flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 whitespace-nowrap shrink-0"
                   >
-                    <Plus className="w-3.5 h-3.5" />
+                    <Plus className="w-4 h-4" />
                     <span>
                       {adminCategoryPath.subSubcategory
                         ? (lang === 'bn' ? 'চাইল্ড আইটেম' : 'Add Child')
@@ -4399,7 +4455,7 @@ export const AdminPortal: React.FC = () => {
                             <div 
                               ref={provided.innerRef}
                               {...provided.draggableProps}
-                              className="bg-white rounded-2xl border border-slate-200 overflow-hidden p-5 space-y-4 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow relative"
+                              className="bg-white rounded-2xl border-2 border-slate-300 overflow-hidden p-5 space-y-4 shadow-md flex flex-col justify-between hover:shadow-lg transition-all relative"
                             >
                               {/* Drag Handle */}
                               <div 
@@ -4557,7 +4613,7 @@ export const AdminPortal: React.FC = () => {
                                 <div 
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
-                                  className="bg-white rounded-2xl border border-slate-200 p-5 space-y-4 shadow-xs flex flex-col justify-between hover:shadow-md transition-all relative"
+                                  className="bg-white rounded-2xl border-2 border-slate-300 p-5 space-y-4 shadow-md flex flex-col justify-between hover:shadow-lg transition-all relative"
                                 >
                                   {/* Drag Handle */}
                                   <div 
@@ -4738,13 +4794,13 @@ export const AdminPortal: React.FC = () => {
 
               return (
                 <div className="space-y-5">
-                  <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="p-4 bg-emerald-50 border-2 border-emerald-300 shadow-sm rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="space-y-0.5">
-                      <span className="text-[10px] font-mono uppercase font-bold text-emerald-700">Category Linked Collection</span>
-                      <h3 className="text-base font-extrabold text-emerald-950">
+                      <span className="text-[10px] font-mono uppercase font-black text-emerald-700">Category Linked Collection</span>
+                      <h3 className="text-base font-black text-emerald-950">
                         "{adminCategoryPath.subSubcategory}" - {lang === 'bn' ? 'পণ্যসমূহ' : 'Products'} ({categoryProducts.length}টি)
                       </h3>
-                      <p className="text-xs text-emerald-800 font-medium">
+                      <p className="text-xs text-emerald-800 font-bold">
                         {lang === 'bn'
                           ? `পাবলিক ওয়েবসাইটে ${adminCategoryPath.subSubcategory} ক্যাটাগরিতে যে প্রোডাক্টগুলো দেখাবে`
                           : `Products published under ${adminCategoryPath.subSubcategory}`}
@@ -4753,7 +4809,7 @@ export const AdminPortal: React.FC = () => {
 
                     <button
                       onClick={() => handleOpenAddProduct(adminCategoryPath.categorySlug, adminCategoryPath.subSubcategory)}
-                      className="px-4 py-2 text-xs font-extrabold text-white bg-[#009245] hover:bg-[#007a3a] rounded-xl shadow-xs inline-flex items-center gap-1.5 shrink-0"
+                      className="px-4 py-2 text-xs font-black text-white bg-[#009245] hover:bg-[#007a3a] rounded-xl shadow-xs inline-flex items-center gap-1.5 shrink-0 transition-all active:scale-95"
                     >
                       <Plus className="w-4 h-4" />
                       <span>{lang === 'bn' ? `"${adminCategoryPath.subSubcategory}"-এ নতুন প্রোডাক্ট যোগ করুন` : 'Add Product'}</span>
@@ -4761,104 +4817,324 @@ export const AdminPortal: React.FC = () => {
                   </div>
 
                   {categoryProducts.length > 0 ? (
-                    <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-left text-xs text-slate-700">
-                          <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
-                            <tr>
-                              <th className="py-3 px-4">ছবি</th>
-                              <th className="py-3 px-4">কোড</th>
-                              <th className="py-3 px-4">পণ্য নাম</th>
-                              <th className="py-3 px-4">ক্রয়মূল্য (Cost)</th>
-                              <th className="py-3 px-4">বিক্রি মূল্য</th>
-                              <th className="py-3 px-4">কমিশন</th>
-                              <th className="py-3 px-4">স্ট্যাটাস</th>
-                              <th className="py-3 px-4 text-right">অ্যাকশন</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-slate-100 font-medium">
-                            {categoryProducts.map((prod, index) => (
-                              <tr key={`${prod.id}-${index}`} className="hover:bg-slate-50">
-                                <td className="py-2.5 px-4">
-                                  <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-100 border border-slate-200">
-                                    <img src={prod.images[0]?.url || '/images/product_shop_dress_1790244714775.jpg'} alt="" className="w-full h-full object-cover" />
+                    <div>
+                      {/* Desktop Table View */}
+                      <div className="hidden md:block bg-white rounded-2xl border-2 border-slate-300 shadow-md overflow-hidden ring-1 ring-slate-900/5">
+                        <div className="overflow-x-auto">
+                          <table className="w-full min-w-[1100px] text-left text-xs text-slate-700 font-sans border-collapse">
+                            <thead className="bg-slate-100 text-slate-800 font-extrabold border-b-2 border-slate-300">
+                              <tr>
+                                <th className="py-3.5 px-3 font-extrabold border-r border-slate-200">ছবি</th>
+                                <th className="py-3.5 px-3 font-extrabold border-r border-slate-200">কোড</th>
+                                <th className="py-3.5 px-3 font-extrabold border-r border-slate-200">পণ্য নাম</th>
+                                <th className="py-3.5 px-3 font-extrabold border-r border-slate-200">আসল মূল্য (Cost)</th>
+                                <th className="py-3.5 px-3 font-extrabold border-r border-slate-200">বিক্রয় মূল্য</th>
+                                <th className="py-3.5 px-3 font-extrabold border-r border-slate-200">কমিশন</th>
+                                <th className="py-3.5 px-3 font-extrabold border-r border-slate-200">স্ট্যাটাস</th>
+                                <th className="py-3.5 px-3 font-extrabold text-right">অ্যাকশন</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y-2 divide-slate-200 font-medium">
+                              {categoryProducts.map((prod, index) => {
+                                const edit = getRowEdit(prod);
+                                return (
+                                  <tr key={`${prod.id}-${index}`} className="hover:bg-slate-50/80 transition-colors">
+                                    <td className="py-2.5 px-3 border-r border-slate-200">
+                                      <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-100 border-2 border-slate-300 shadow-2xs shrink-0">
+                                        <img src={prod.images[0]?.url || '/images/product_shop_dress_1790244714775.jpg'} alt="" className="w-full h-full object-cover" />
+                                      </div>
+                                    </td>
+                                    <td className="py-2.5 px-3 font-mono font-black text-slate-900 border-r border-slate-200 whitespace-nowrap">{prod.productCode}</td>
+                                    <td className="py-2.5 px-3 border-r border-slate-200 min-w-[170px]">
+                                      <span className="font-extrabold text-slate-900 block truncate">{prod.nameBn}</span>
+                                      <span className="text-slate-500 text-[11px] block truncate">{prod.nameEn}</span>
+                                    </td>
+
+                                    {/* Cost Price */}
+                                    <td className="py-2.5 px-3 border-r border-slate-200 whitespace-nowrap">
+                                      <div className="inline-flex items-center gap-1 bg-white border-2 border-slate-300 focus-within:border-[#009245] rounded-xl px-2 py-1 transition-all shadow-2xs">
+                                        <span className="text-slate-400 font-black text-xs">৳</span>
+                                        <input
+                                          type="number"
+                                          value={edit.originalPrice}
+                                          onChange={(e) => updateRowEdit(prod.id, 'originalPrice', e.target.value)}
+                                          className="w-18 bg-transparent font-mono font-black text-slate-900 outline-none text-left [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-xs"
+                                        />
+                                      </div>
+                                    </td>
+
+                                    {/* Selling Price */}
+                                    <td className="py-2.5 px-3 border-r border-slate-200 whitespace-nowrap">
+                                      <div className="inline-flex items-center gap-1 bg-white border-2 border-slate-300 focus-within:border-[#009245] rounded-xl px-2 py-1 transition-all shadow-2xs">
+                                        <span className="text-slate-400 font-black text-xs">৳</span>
+                                        <input
+                                          type="number"
+                                          value={edit.sellingPrice}
+                                          onChange={(e) => updateRowEdit(prod.id, 'sellingPrice', e.target.value)}
+                                          className="w-18 bg-transparent font-mono font-black text-slate-900 outline-none text-left [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-xs"
+                                        />
+                                      </div>
+                                    </td>
+
+                                    {/* Commission */}
+                                    <td className="py-2.5 px-3 border-r border-slate-200 whitespace-nowrap">
+                                      <select
+                                        value={
+                                          edit.starRating
+                                            ? `star-${edit.starRating}`
+                                            : edit.commissionType === 'percentage'
+                                            ? `perc-${edit.commissionRate}`
+                                            : `fixed-${edit.commissionRate}`
+                                        }
+                                        onChange={(e) => {
+                                          const v = e.target.value;
+                                          if (v.startsWith('star-')) {
+                                            const s = Number(v.replace('star-', ''));
+                                            const disc = s === 4 ? 15 : s === 3 ? 20 : s === 2 ? 25 : s === 1 ? 30 : 10;
+                                            updateRowEdit(prod.id, 'starRating', s);
+                                            updateRowEdit(prod.id, 'commissionRate', disc);
+                                            updateRowEdit(prod.id, 'commissionType', 'percentage');
+                                          } else if (v.startsWith('perc-')) {
+                                            const rate = Number(v.replace('perc-', ''));
+                                            updateRowEdit(prod.id, 'starRating', undefined);
+                                            updateRowEdit(prod.id, 'commissionRate', rate);
+                                            updateRowEdit(prod.id, 'commissionType', 'percentage');
+                                          } else if (v.startsWith('fixed-')) {
+                                            const rate = Number(v.replace('fixed-', ''));
+                                            updateRowEdit(prod.id, 'starRating', undefined);
+                                            updateRowEdit(prod.id, 'commissionRate', rate);
+                                            updateRowEdit(prod.id, 'commissionType', 'fixed');
+                                          }
+                                        }}
+                                        className="px-2 py-1 bg-emerald-50 text-emerald-800 font-black border-2 border-emerald-300 rounded-xl text-xs outline-none cursor-pointer hover:bg-emerald-100 transition-all shadow-2xs"
+                                      >
+                                        <option value="star-5">10% (5★)</option>
+                                        <option value="star-4">15% (4★)</option>
+                                        <option value="star-3">20% (3★)</option>
+                                        <option value="star-2">25% (2★)</option>
+                                        <option value="star-1">30% (1★)</option>
+                                        <option value="perc-8">8%</option>
+                                        <option value="perc-5">5%</option>
+                                        <option value="perc-0">0%</option>
+                                      </select>
+                                    </td>
+
+                                    {/* Status */}
+                                    <td className="py-2.5 px-3 border-r border-slate-200 whitespace-nowrap">
+                                      <select
+                                        value={edit.isActive ? 'online' : 'offline'}
+                                        onChange={(e) => updateRowEdit(prod.id, 'isActive', e.target.value === 'online')}
+                                        className={`px-2 py-1 rounded-xl text-xs font-black border-2 cursor-pointer outline-none transition-all shadow-2xs ${
+                                          edit.isActive
+                                            ? 'bg-emerald-50 text-emerald-800 border-emerald-400 hover:bg-emerald-100'
+                                            : 'bg-amber-50 text-amber-800 border-amber-400 hover:bg-amber-100'
+                                        }`}
+                                      >
+                                        <option value="online">অনলাইন</option>
+                                        <option value="offline">অফলাইন</option>
+                                      </select>
+                                    </td>
+
+                                    {/* Action buttons */}
+                                    <td className="py-3 px-4 text-right whitespace-nowrap">
+                                      <div className="inline-flex items-center gap-1.5 justify-end">
+                                        <button
+                                          type="button"
+                                          onClick={() => handleSaveRowProduct(prod)}
+                                          className="px-3 py-1.5 text-xs font-black text-white bg-[#009245] hover:bg-[#007a38] border-2 border-emerald-600 rounded-xl transition-all inline-flex items-center gap-1 cursor-pointer shadow-sm active:scale-95"
+                                          title={lang === 'bn' ? 'সেভ করুন' : 'Save Changes'}
+                                        >
+                                          <Check className="w-3.5 h-3.5" />
+                                          <span>{lang === 'bn' ? 'সেভ' : 'Save'}</span>
+                                        </button>
+                                        <button
+                                          type="button"
+                                          onClick={() => setViewingProduct(prod)}
+                                          className="px-2.5 py-1.5 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 rounded-xl transition-all inline-flex items-center gap-1 cursor-pointer shadow-2xs"
+                                          title={lang === 'bn' ? 'ডিটেইলস ভিউ করুন' : 'View Product'}
+                                        >
+                                          <Eye className="w-3.5 h-3.5" />
+                                          <span>{lang === 'bn' ? 'ভিউ' : 'View'}</span>
+                                        </button>
+                                        <button
+                                          type="button"
+                                          onClick={() => handleOpenEditProduct(prod)}
+                                          className="px-2.5 py-1.5 text-xs font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 rounded-xl transition-all inline-flex items-center gap-1 cursor-pointer shadow-2xs"
+                                          title={lang === 'bn' ? 'প্রোডাক্ট এডিট করুন' : 'Edit Product'}
+                                        >
+                                          <Edit2 className="w-3.5 h-3.5" />
+                                          <span>{lang === 'bn' ? 'এডিট' : 'Edit'}</span>
+                                        </button>
+                                        <button
+                                          type="button"
+                                          onClick={() => handleDeleteProduct(prod.id)}
+                                          className="p-2 text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 border-2 border-rose-200 rounded-xl transition-all cursor-pointer shadow-2xs"
+                                          title={lang === 'bn' ? 'ডিলিট করুন' : 'Delete'}
+                                        >
+                                          <Trash2 className="w-4 h-4" />
+                                        </button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                      {/* Mobile Card View */}
+                      <div className="block md:hidden space-y-3.5">
+                        {categoryProducts.map((prod, index) => {
+                          const edit = getRowEdit(prod);
+                          return (
+                            <div key={`mob-${prod.id}-${index}`} className="bg-white rounded-2xl border-2 border-slate-300 shadow-md p-4 space-y-3 font-sans">
+                              <div className="flex items-start gap-3">
+                                <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-100 border-2 border-slate-300 shadow-2xs shrink-0">
+                                  <img
+                                    src={prod.images[0]?.url || '/images/product_shop_dress_1790244714775.jpg'}
+                                    alt=""
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center justify-between gap-2">
+                                    <span className="font-mono text-xs font-black text-slate-900 bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-300">{prod.productCode}</span>
+                                    <span className="uppercase text-[10px] font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">{prod.categorySlug}</span>
                                   </div>
-                                </td>
-                                <td className="py-2.5 px-4 font-mono font-bold text-slate-900">{prod.productCode}</td>
-                                <td className="py-2.5 px-4">
-                                  <span className="font-extrabold text-slate-900 block line-clamp-1">{prod.nameBn}</span>
-                                  <span className="text-slate-400 text-[11px] block">{prod.nameEn}</span>
-                                </td>
-                                <td className="py-2.5 px-4 font-mono text-slate-500">৳{prod.originalPrice?.toLocaleString()}</td>
-                                <td className="py-2.5 px-4 font-mono font-extrabold text-slate-900">৳{prod.sellingPrice.toLocaleString()}</td>
-                                <td className="py-2.5 px-4 font-mono font-bold text-emerald-600">
-                                  {prod.commissionType === 'percentage' ? `${prod.commissionRate}%` : `৳${prod.commissionRate}`}
-                                </td>
-                                <td className="py-2.5 px-4">
-                                  <button
-                                    onClick={() => handleToggleProductStatus(prod.id)}
-                                    className={`px-2.5 py-0.5 rounded text-[11px] font-bold cursor-pointer ${
-                                      prod.isActive
-                                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                        : 'bg-slate-100 text-slate-500 border border-slate-200'
+                                  <h4 className="font-extrabold text-slate-900 text-sm mt-1 truncate">{prod.nameBn}</h4>
+                                  <p className="text-slate-500 text-xs truncate">{prod.nameEn}</p>
+                                </div>
+                              </div>
+
+                              <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-200">
+                                <div>
+                                  <label className="text-[11px] font-extrabold text-slate-500 block mb-1">আসল মূল্য (Cost)</label>
+                                  <div className="flex items-center gap-1 bg-white border-2 border-slate-300 focus-within:border-[#009245] rounded-xl px-2.5 py-1.5 transition-all shadow-2xs">
+                                    <span className="text-slate-400 font-black text-xs">৳</span>
+                                    <input
+                                      type="number"
+                                      value={edit.originalPrice}
+                                      onChange={(e) => updateRowEdit(prod.id, 'originalPrice', e.target.value)}
+                                      className="w-full bg-transparent font-mono font-black text-slate-900 outline-none text-left [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-xs"
+                                    />
+                                  </div>
+                                </div>
+                                <div>
+                                  <label className="text-[11px] font-extrabold text-slate-500 block mb-1">বিক্রয় মূল্য</label>
+                                  <div className="flex items-center gap-1 bg-white border-2 border-slate-300 focus-within:border-[#009245] rounded-xl px-2.5 py-1.5 transition-all shadow-2xs">
+                                    <span className="text-slate-400 font-black text-xs">৳</span>
+                                    <input
+                                      type="number"
+                                      value={edit.sellingPrice}
+                                      onChange={(e) => updateRowEdit(prod.id, 'sellingPrice', e.target.value)}
+                                      className="w-full bg-transparent font-mono font-black text-slate-900 outline-none text-left [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-xs"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="grid grid-cols-2 gap-2 pt-1">
+                                <div>
+                                  <label className="text-[11px] font-extrabold text-slate-500 block mb-1">কমিশন</label>
+                                  <select
+                                    value={
+                                      edit.starRating
+                                        ? `star-${edit.starRating}`
+                                        : edit.commissionType === 'percentage'
+                                        ? `perc-${edit.commissionRate}`
+                                        : `fixed-${edit.commissionRate}`
+                                    }
+                                    onChange={(e) => {
+                                      const v = e.target.value;
+                                      if (v.startsWith('star-')) {
+                                        const s = Number(v.replace('star-', ''));
+                                        const disc = s === 4 ? 15 : s === 3 ? 20 : s === 2 ? 25 : s === 1 ? 30 : 10;
+                                        updateRowEdit(prod.id, 'starRating', s);
+                                        updateRowEdit(prod.id, 'commissionRate', disc);
+                                        updateRowEdit(prod.id, 'commissionType', 'percentage');
+                                      } else if (v.startsWith('perc-')) {
+                                        const rate = Number(v.replace('perc-', ''));
+                                        updateRowEdit(prod.id, 'starRating', undefined);
+                                        updateRowEdit(prod.id, 'commissionRate', rate);
+                                        updateRowEdit(prod.id, 'commissionType', 'percentage');
+                                      } else if (v.startsWith('fixed-')) {
+                                        const rate = Number(v.replace('fixed-', ''));
+                                        updateRowEdit(prod.id, 'starRating', undefined);
+                                        updateRowEdit(prod.id, 'commissionRate', rate);
+                                        updateRowEdit(prod.id, 'commissionType', 'fixed');
+                                      }
+                                    }}
+                                    className="w-full px-2.5 py-1.5 bg-emerald-50 text-emerald-800 font-black border-2 border-emerald-300 rounded-xl text-xs outline-none cursor-pointer"
+                                  >
+                                    <option value="star-5">10% (5★)</option>
+                                    <option value="star-4">15% (4★)</option>
+                                    <option value="star-3">20% (3★)</option>
+                                    <option value="star-2">25% (2★)</option>
+                                    <option value="star-1">30% (1★)</option>
+                                    <option value="perc-8">8%</option>
+                                    <option value="perc-5">5%</option>
+                                    <option value="perc-0">0%</option>
+                                  </select>
+                                </div>
+                                <div>
+                                  <label className="text-[11px] font-extrabold text-slate-500 block mb-1">স্ট্যাটাস</label>
+                                  <select
+                                    value={edit.isActive ? 'online' : 'offline'}
+                                    onChange={(e) => updateRowEdit(prod.id, 'isActive', e.target.value === 'online')}
+                                    className={`w-full px-2.5 py-1.5 rounded-xl text-xs font-black border-2 cursor-pointer outline-none ${
+                                      edit.isActive
+                                        ? 'bg-emerald-50 text-emerald-800 border-emerald-400'
+                                        : 'bg-amber-50 text-amber-800 border-amber-400'
                                     }`}
                                   >
-                                    {prod.isActive ? 'সক্রিয়' : 'নিষ্ক্রিয়'}
-                                  </button>
-                                </td>
-                                <td className="py-2.5 px-4 text-right">
-                                  <div className="inline-flex items-center gap-1.5 justify-end">
-                                    {/* View Option */}
-                                    <button
-                                      onClick={() => setViewingProduct(prod)}
-                                      className="px-2 py-1 text-[11px] font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors inline-flex items-center gap-1 shrink-0"
-                                      title={lang === 'bn' ? 'ডিটেইলস ভিউ করুন' : 'View Product'}
-                                    >
-                                      <Eye className="w-3 h-3" />
-                                      <span>{lang === 'bn' ? 'ভিউ' : 'View'}</span>
-                                    </button>
+                                    <option value="online">অনলাইন</option>
+                                    <option value="offline">অফলাইন</option>
+                                  </select>
+                                </div>
+                              </div>
 
-                                    {/* Edit Option */}
-                                    <button
-                                      onClick={() => handleOpenEditProduct(prod)}
-                                      className="px-2 py-1 text-[11px] font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg transition-colors inline-flex items-center gap-1 shrink-0"
-                                      title={lang === 'bn' ? 'প্রোডাক্ট এডিট করুন' : 'Edit Product'}
-                                    >
-                                      <Edit2 className="w-3 h-3" />
-                                      <span>{lang === 'bn' ? 'এডিট' : 'Edit'}</span>
-                                    </button>
-
-                                    {/* Disable / Active Toggle Option */}
-                                    <button
-                                      onClick={() => handleToggleProductStatus(prod.id)}
-                                      className={`px-2 py-1 text-[11px] font-bold border rounded-lg transition-colors shrink-0 ${
-                                        prod.isActive
-                                          ? 'text-amber-700 bg-amber-50 hover:bg-amber-100 border-amber-200'
-                                          : 'text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border-emerald-200'
-                                      }`}
-                                      title={prod.isActive ? (lang === 'bn' ? 'নিষ্ক্রিয় করুন' : 'Disable') : (lang === 'bn' ? 'সক্রিয় করুন' : 'Enable')}
-                                    >
-                                      <span>{prod.isActive ? (lang === 'bn' ? 'নিষ্ক্রিয়' : 'Disable') : (lang === 'bn' ? 'সক্রিয়' : 'Enable')}</span>
-                                    </button>
-
-                                    {/* Delete Option */}
-                                    <button
-                                      onClick={() => handleDeleteProduct(prod.id)}
-                                      className="p-1 text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg transition-colors shrink-0"
-                                      title={lang === 'bn' ? 'ডিলিট করুন' : 'Delete'}
-                                    >
-                                      <Trash2 className="w-3.5 h-3.5" />
-                                    </button>
-                                  </div>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-200">
+                                <button
+                                  type="button"
+                                  onClick={() => handleSaveRowProduct(prod)}
+                                  className="flex-1 px-3 py-2 text-xs font-black text-white bg-[#009245] hover:bg-[#007a38] border-2 border-emerald-600 rounded-xl inline-flex items-center justify-center gap-1 cursor-pointer shadow-sm active:scale-95"
+                                >
+                                  <Check className="w-3.5 h-3.5" />
+                                  <span>{lang === 'bn' ? 'সেভ করুন' : 'Save'}</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setViewingProduct(prod)}
+                                  className="px-3 py-2 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 rounded-xl inline-flex items-center gap-1 cursor-pointer"
+                                  title="View"
+                                >
+                                  <Eye className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenEditProduct(prod)}
+                                  className="px-3 py-2 text-xs font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 rounded-xl inline-flex items-center gap-1 cursor-pointer"
+                                  title="Edit"
+                                >
+                                  <Edit2 className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteProduct(prod.id)}
+                                  className="p-2 text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 border-2 border-rose-200 rounded-xl cursor-pointer"
+                                  title="Delete"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   ) : (
-                    <div className="py-12 text-center bg-white rounded-2xl border border-dashed border-slate-200 space-y-3">
+                    <div className="py-12 text-center bg-white rounded-2xl border-2 border-dashed border-slate-300 space-y-3">
                       <p className="text-sm font-bold text-slate-700">
                         {lang === 'bn' ? `"${adminCategoryPath.subSubcategory}" ক্যাটাগরিতে এখনো কোনো প্রোডাক্ট যুক্ত করা হয়নি।` : 'No products added in this subcategory yet.'}
                       </p>
@@ -4872,7 +5148,7 @@ export const AdminPortal: React.FC = () => {
                             subcategoryEn: adminCategoryPath.subSubcategory || '',
                           }));
                         }}
-                        className="px-4 py-2 bg-[#009245] hover:bg-[#007a3a] text-white text-xs font-bold rounded-xl shadow-xs"
+                        className="px-4 py-2 bg-[#009245] hover:bg-[#007a3a] text-white text-xs font-black rounded-xl shadow-xs active:scale-95 transition-all"
                       >
                         + {lang === 'bn' ? 'প্রথম প্রোডাক্ট যোগ করুন' : 'Add First Product'}
                       </button>
