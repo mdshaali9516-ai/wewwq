@@ -3930,7 +3930,7 @@ export const AdminPortal: React.FC = () => {
             </div>
 
             {/* Products Table */}
-            <div className="bg-white rounded-2xl border-2 border-slate-300 shadow-md overflow-hidden ring-1 ring-slate-900/5">
+            <div className="hidden md:block bg-white rounded-2xl border-2 border-slate-300 shadow-md overflow-hidden ring-1 ring-slate-900/5">
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[1100px] text-left text-xs text-slate-700 font-sans border-collapse">
                   <thead className="bg-slate-100 text-slate-800 font-extrabold border-b-2 border-slate-300">
@@ -4127,6 +4127,170 @@ export const AdminPortal: React.FC = () => {
                   </tbody>
                 </table>
               </div>
+            </div>
+
+            {/* Mobile Card View (100% visible, no hidden columns) */}
+            <div className="block md:hidden space-y-3.5 mt-4">
+              {(() => {
+                const filteredProducts = products.filter(prod => {
+                  if (!productSearchQuery.trim()) return true;
+                  const q = productSearchQuery.trim().toLowerCase();
+                  const nameBn = (prod.nameBn || '').toLowerCase();
+                  const nameEn = (prod.nameEn || '').toLowerCase();
+                  const code = (prod.productCode || '').toLowerCase();
+                  const cat = (prod.categorySlug || '').toLowerCase();
+                  return nameBn.includes(q) || nameEn.includes(q) || code.includes(q) || cat.includes(q);
+                });
+
+                if (filteredProducts.length === 0) return null;
+
+                return filteredProducts.map(prod => {
+                  const edit = getRowEdit(prod);
+                  return (
+                    <div key={prod.id} className="bg-white rounded-2xl border-2 border-slate-300 shadow-md p-4 space-y-3 font-sans">
+                      <div className="flex items-start gap-3">
+                        <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-100 border-2 border-slate-300 shadow-2xs shrink-0">
+                          <img
+                            src={prod.images[0]?.url || '/images/product_shop_dress_1790244714775.jpg'}
+                            alt=""
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-mono text-xs font-black text-slate-900 bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-300">{prod.productCode}</span>
+                            <span className="uppercase text-[10px] font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">{prod.categorySlug}</span>
+                          </div>
+                          <h4 className="font-extrabold text-slate-900 text-sm mt-1 truncate">{prod.nameBn}</h4>
+                          <p className="text-slate-500 text-xs truncate">{prod.nameEn}</p>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-200">
+                        <div>
+                          <label className="text-[11px] font-extrabold text-slate-500 block mb-1">আসল মূল্য (Cost)</label>
+                          <div className="flex items-center gap-1 bg-white border-2 border-slate-300 focus-within:border-[#009245] rounded-xl px-2.5 py-1.5 transition-all shadow-2xs">
+                            <span className="text-slate-400 font-black text-xs">৳</span>
+                            <input
+                              type="number"
+                              value={edit.originalPrice}
+                              onChange={(e) => updateRowEdit(prod.id, 'originalPrice', e.target.value)}
+                              className="w-full bg-transparent font-mono font-black text-slate-900 outline-none text-left [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-xs"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-extrabold text-slate-500 block mb-1">বিক্রয় মূল্য</label>
+                          <div className="flex items-center gap-1 bg-white border-2 border-slate-300 focus-within:border-[#009245] rounded-xl px-2.5 py-1.5 transition-all shadow-2xs">
+                            <span className="text-slate-400 font-black text-xs">৳</span>
+                            <input
+                              type="number"
+                              value={edit.sellingPrice}
+                              onChange={(e) => updateRowEdit(prod.id, 'sellingPrice', e.target.value)}
+                              className="w-full bg-transparent font-mono font-black text-slate-900 outline-none text-left [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-xs"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 pt-1">
+                        <div>
+                          <label className="text-[11px] font-extrabold text-slate-500 block mb-1">কমিশন</label>
+                          <select
+                            value={
+                              edit.starRating
+                                ? `star-${edit.starRating}`
+                                : edit.commissionType === 'percentage'
+                                ? `perc-${edit.commissionRate}`
+                                : `fixed-${edit.commissionRate}`
+                            }
+                            onChange={(e) => {
+                              const v = e.target.value;
+                              if (v.startsWith('star-')) {
+                                const s = Number(v.replace('star-', ''));
+                                const disc = s === 4 ? 15 : s === 3 ? 20 : s === 2 ? 25 : s === 1 ? 30 : 10;
+                                updateRowEdit(prod.id, 'starRating', s);
+                                updateRowEdit(prod.id, 'commissionRate', disc);
+                                updateRowEdit(prod.id, 'commissionType', 'percentage');
+                              } else if (v.startsWith('perc-')) {
+                                const rate = Number(v.replace('perc-', ''));
+                                updateRowEdit(prod.id, 'starRating', undefined);
+                                updateRowEdit(prod.id, 'commissionRate', rate);
+                                updateRowEdit(prod.id, 'commissionType', 'percentage');
+                              } else if (v.startsWith('fixed-')) {
+                                const rate = Number(v.replace('fixed-', ''));
+                                updateRowEdit(prod.id, 'starRating', undefined);
+                                updateRowEdit(prod.id, 'commissionRate', rate);
+                                updateRowEdit(prod.id, 'commissionType', 'fixed');
+                              }
+                            }}
+                            className="w-full px-2.5 py-1.5 bg-emerald-50 text-emerald-800 font-black border-2 border-emerald-300 rounded-xl text-xs outline-none cursor-pointer"
+                          >
+                            <option value="star-5">10% (5★)</option>
+                            <option value="star-4">15% (4★)</option>
+                            <option value="star-3">20% (3★)</option>
+                            <option value="star-2">25% (2★)</option>
+                            <option value="star-1">30% (1★)</option>
+                            <option value="perc-8">8%</option>
+                            <option value="perc-5">5%</option>
+                            <option value="perc-0">0%</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-extrabold text-slate-500 block mb-1">স্ট্যাটাস</label>
+                          <select
+                            value={edit.isActive ? 'online' : 'offline'}
+                            onChange={(e) => updateRowEdit(prod.id, 'isActive', e.target.value === 'online')}
+                            className={`w-full px-2.5 py-1.5 rounded-xl text-xs font-black border-2 cursor-pointer outline-none ${
+                              edit.isActive
+                                ? 'bg-emerald-50 text-emerald-800 border-emerald-400'
+                                : 'bg-amber-50 text-amber-800 border-amber-400'
+                            }`}
+                          >
+                            <option value="online">অনলাইন</option>
+                            <option value="offline">অফলাইন</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-200">
+                        <button
+                          type="button"
+                          onClick={() => handleSaveRowProduct(prod)}
+                          className="flex-1 px-3 py-2 text-xs font-black text-white bg-[#009245] hover:bg-[#007a38] border-2 border-emerald-600 rounded-xl inline-flex items-center justify-center gap-1 cursor-pointer shadow-sm active:scale-95"
+                        >
+                          <Check className="w-3.5 h-3.5" />
+                          <span>{lang === 'bn' ? 'সেভ করুন' : 'Save'}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setViewingProduct(prod)}
+                          className="px-3 py-2 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 rounded-xl inline-flex items-center gap-1 cursor-pointer"
+                          title="View"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleOpenEditProduct(prod)}
+                          className="px-3 py-2 text-xs font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 rounded-xl inline-flex items-center gap-1 cursor-pointer"
+                          title="Edit"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteProduct(prod.id)}
+                          className="p-2 text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 border-2 border-rose-200 rounded-xl cursor-pointer"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                });
+              })()}
             </div>
           </div>
         )}
